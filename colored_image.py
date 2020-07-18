@@ -31,7 +31,7 @@ def random_color():
     """
     Takes a random color from xkcd.com (https://xkcd.com/color/rgb.txt).
 
-    :return: (int, int, int), str
+    :return: str, (int, int, int)
     """
 
     if not xkcd_color_list:
@@ -39,9 +39,9 @@ def random_color():
 
     if xkcd_color_list:
         name, color = choice(xkcd_color_list)[:-1].split('\t')
-        return html_to_color(color), name.capitalize()
+        return name.capitalize(), html_to_color(color)
     else:
-        return (randint(0, 255), randint(0, 255), randint(0, 255)), 'Can\'t connect to xkcd.com'
+        return 'Can\'t connect to xkcd.com', (randint(0, 255), randint(0, 255), randint(0, 255))
 
 
 def color_to_html(color):
@@ -89,7 +89,7 @@ def colored_image(color=None, html=None):
     """
     Generates 500x500 image filled in with a given or random color from xkcd.
 
-    :return: bytes, str, str
+    :return: str, str, bytes
     """
     width, height = 500, 500
     image = Image.new('RGB', (width, height))
@@ -99,7 +99,7 @@ def colored_image(color=None, html=None):
         if html:
             color = html_to_color(html)
         else:
-            color, name = random_color()
+            name, color = random_color()
 
     ImageDraw.floodfill(image, xy=(0, 0), value=color)
 
@@ -107,4 +107,4 @@ def colored_image(color=None, html=None):
     image.save(bytes_buffer, format='PNG')
     bytes_image = bytes_buffer.getvalue()
 
-    return bytes_image, color_to_html(color), name
+    return name, color_to_html(color), bytes_image

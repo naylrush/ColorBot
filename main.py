@@ -9,7 +9,7 @@ bot = telebot.TeleBot(hidden.bot_token)
 
 # Make a markup
 markup = telebot.types.ReplyKeyboardMarkup()
-random_button = telebot.types.KeyboardButton('Random')
+random_button = telebot.types.KeyboardButton('Random xkcd')
 markup.row(random_button)
 
 
@@ -23,10 +23,10 @@ def send_message(message):
     :return: None
     """
     if message.text == 'Random':
-        image, html, name = colored_image.colored_image()
+        name, html, image = colored_image.colored_image()
         bot.send_photo(message.chat.id, photo=image, caption='{} — {}'.format(name, html))
     elif colored_image.is_color_in_html(message.text):
-        image, html, name = colored_image.colored_image(html=message.text)
+        name, html, image = colored_image.colored_image(html=message.text)
         bot.send_photo(message.chat.id, photo=image, caption='{} — {}'.format(name, html))
     else:
         bot.send_message(message.chat.id, text='Choose a button:', reply_markup=markup)
