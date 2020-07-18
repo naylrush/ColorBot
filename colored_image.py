@@ -1,8 +1,8 @@
 
 from PIL import Image, ImageDraw
 from random import randint, choice
+import converter
 import io
-import re
 import ssl
 import urllib.request
 
@@ -40,51 +40,10 @@ def random_color():
 
     if xkcd_color_list:
         name, html = choice(xkcd_color_list)
-        return name, html, html_to_color(html)
+        return name, html, converter.html_to_color(html)
     else:
         color = (randint(0, 255), randint(0, 255), randint(0, 255))
-        return 'Can\'t connect to xkcd.com', color_to_html(color), color
-
-
-def color_to_html(color):
-    """
-    Convert color to HTML color code.
-
-    :param color: (int, int, int)
-    :return: str
-    """
-    if len(color) != 3:
-        raise Exception('Three color properties required')
-
-    return '#' + ('{:0<2}'*3).format(*map(lambda s: format(s, 'x'), color)).upper()
-
-
-def is_color_in_html(html):
-    """
-    Checks color is in HTML color format.
-
-    :param html: str
-    :return: bool
-    """
-    coincidences = re.findall('#[0-9a-fA-F]*', html)
-    return coincidences and coincidences[0] == html and len(html) == 7
-
-
-def html_to_color(html):
-    """
-    Convert HTML color code to color.
-
-    :param html: str
-    :return: (int, int, int)
-    """
-    if not is_color_in_html(html):
-        raise Exception('The color is not in HTML color format!')
-
-    color = []
-    for i in range(3):
-        color.append(html[1 + i*2:i*2 + 3])
-
-    return tuple(map(lambda s: int(s, 16), color))
+        return 'Can\'t connect to xkcd.com', converter.color_to_html(color), color
 
 
 def colored_image(color=None, html=None):
@@ -99,7 +58,7 @@ def colored_image(color=None, html=None):
     name = 'Unknown color'
     if not color:
         if html:
-            color = html_to_color(html)
+            color = converter.html_to_color(html)
         else:
             name, html, color = random_color()
 

@@ -1,6 +1,7 @@
 
-import telebot
 import colored_image
+import converter
+import telebot
 
 
 # Make a bot
@@ -25,7 +26,7 @@ def send_message(message):
     if message.text == 'Random':
         name, html, image = colored_image.colored_image()
         bot.send_photo(message.chat.id, photo=image, caption='{} — {}'.format(name, html))
-    elif colored_image.is_color_in_html(message.text):
+    elif converter.is_color_in_html(message.text):
         name, html, image = colored_image.colored_image(html=message.text)
         bot.send_photo(message.chat.id, photo=image, caption='{} — {}'.format(name, html))
     else:
