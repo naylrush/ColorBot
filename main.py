@@ -10,13 +10,13 @@ bot = telebot.TeleBot(hidden.bot_token)
 
 # Make a markup
 markup = telebot.types.ReplyKeyboardMarkup()
-random_xkcd_button = telebot.types.KeyboardButton('Random xkcd')
-random_button = telebot.types.KeyboardButton('Random')
-markup.row(random_xkcd_button, random_button)
+buttons_names = ['Random xkcd', 'Random']
+buttons = [telebot.types.KeyboardButton(name) for name in buttons_names]
+markup.row(*buttons[0:2])
 
 
 @bot.message_handler(content_types=['text'])
-def send_message(message):
+def send_image(message):
     """
     Sends image 500x500.
 
@@ -24,9 +24,9 @@ def send_message(message):
 
     :return: None
     """
-    if message.text == 'Random xkcd':
+    if message.text == buttons_names[0]:
         name, html, image = colored_image.colored_image(random=True)
-    elif message.text == 'Random':
+    elif message.text == buttons_names[1]:
         name, html, image = colored_image.colored_image(random=True, xkcd=False)
     elif converter.is_color_in_html(message.text):
         name, html, image = colored_image.colored_image(html=message.text)

@@ -57,6 +57,18 @@ def find_color(name=None, html=None):
     return 'Can\'t connect to xkcd.com' if not inet.xkcd_color_list else 'Color is not found', html, color
 
 
+def image_to_bytes(image):
+    """
+    Converts PIL image to bytes
+
+    :param image: PIL.Image
+    :return: bytes
+    """
+    bytes_buffer = io.BytesIO()
+    image.save(bytes_buffer, format='PNG')
+    return bytes_buffer.getvalue()
+
+
 def colored_image(name=None, html=None, random=False, xkcd=True):
     """
     Generates 500x500 image filled in with a given or random color.
@@ -85,8 +97,4 @@ def colored_image(name=None, html=None, random=False, xkcd=True):
 
     ImageDraw.floodfill(image, xy=(0, 0), value=color)
 
-    bytes_buffer = io.BytesIO()
-    image.save(bytes_buffer, format='PNG')
-    bytes_image = bytes_buffer.getvalue()
-
-    return name, html.upper(), bytes_image
+    return name, html, image_to_bytes(image)
