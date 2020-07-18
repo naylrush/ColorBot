@@ -19,8 +19,9 @@ def download_xkcd_color_list():
     xkcd = 'https://xkcd.com/color/rgb.txt'
 
     try:
-        global xkcd_color_list
         ctx = ssl.SSLContext(ssl.PROTOCOL_TLS)
+
+        global xkcd_color_list
         xkcd_color_list = urllib.request.urlopen(xkcd, context=ctx).read().decode().split('\n')[1:-1]
         xkcd_color_list = map(lambda s: tuple(s[:-1].split('\t')), xkcd_color_list)
         xkcd_color_list = list(map(lambda t: (t[0].capitalize(), t[1].upper()), xkcd_color_list))
@@ -34,7 +35,6 @@ def random_color():
 
     :return: str, str, (int, int, int)
     """
-
     if not xkcd_color_list:
         download_xkcd_color_list()
 
