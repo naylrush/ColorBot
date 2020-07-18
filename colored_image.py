@@ -31,6 +31,17 @@ def download_xkcd_color_list():
 
 def random_color():
     """
+    Returns a random color.
+
+    :return: str, (int, int, int)
+    """
+    color = (randint(0, 255), randint(0, 255), randint(0, 255))
+    html = converter.color_to_html(color)
+    return html, color
+
+
+def random_xkcd_color():
+    """
     Takes a random color from xkcd.com (https://xkcd.com/color/rgb.txt).
 
     :return: str, str, (int, int, int)
@@ -42,8 +53,8 @@ def random_color():
         name, html = choice(xkcd_color_list)
         return name, html, converter.html_to_color(html)
     else:
-        color = (randint(0, 255), randint(0, 255), randint(0, 255))
-        return 'Can\'t connect to xkcd.com', converter.color_to_html(color), color
+        html, color = random_color()
+        return 'Can\'t connect to xkcd.com', html, color
 
 
 def colored_image(color=None, html=None):
@@ -60,7 +71,7 @@ def colored_image(color=None, html=None):
         if html:
             color = converter.html_to_color(html)
         else:
-            name, html, color = random_color()
+            name, html, color = random_xkcd_color()
 
     ImageDraw.floodfill(image, xy=(0, 0), value=color)
 
