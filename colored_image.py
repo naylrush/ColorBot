@@ -4,7 +4,6 @@ from random import randint, choice
 import io
 import re
 import ssl
-import sys
 import urllib.request
 
 
@@ -23,8 +22,8 @@ def download_xkcd_color_list():
         ctx = ssl.SSLContext(ssl.PROTOCOL_TLS)
         global xkcd_color_list
         xkcd_color_list = urllib.request.urlopen(xkcd, context=ctx).read().decode().split('\n')[1:-1]
-    except:
-        print('An error occurred:', sys.exc_info())
+    except IOError as err:
+        print('{} — {}'.format(xkcd, err))
 
 
 def random_color():
