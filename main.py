@@ -13,21 +13,21 @@ random_button = telebot.types.KeyboardButton('Random')
 markup.row(random_button)
 
 
-
-
 @bot.message_handler(content_types=['text'])
 def send_message(message):
     """
     Sends image 500x500.
 
-    Options: Random.
+    Options: Random, Image by color in HTML color format.
 
     :return: None
     """
     if message.text == 'Random':
         image, html = colored_image.colored_image()
         bot.send_photo(message.chat.id, photo=image, caption=html)
-        bot.send_photo(message.chat.id, photo=image, caption=html_code)
+    elif colored_image.is_color_in_html(message.text):
+        image, html = colored_image.colored_image(html=message.text)
+        bot.send_photo(message.chat.id, photo=image, caption=html)
     else:
         bot.send_message(message.chat.id, text='Choose a button:', reply_markup=markup)
 
