@@ -57,21 +57,54 @@ def random_xkcd_color():
         return 'Can\'t connect to xkcd.com', html, color
 
 
-def colored_image(color=None, html=None):
+def find_color(name=None, html=None):
     """
-    Generates 500x500 image filled in with a given or random color from xkcd.
+    Finds color by its name or html in the xkcd color list.
 
+    :param name: str
+    :param html: str
+    :return: str, str, (int, int, int)
+    """
+    if not xkcd_color_list:
+        download_xkcd_color_list()
+
+    if xkcd_color_list:
+        for (name_, html_) in xkcd_color_list:
+            if name == name_ or html == html_:
+                return name_, html_, converter.html_to_color(html_)
+
+    if html:
+        return 'Color is not found', html, converter.html_to_color(html)
+
+    html, color = random_color()
+    return 'Can\'t connect to xkcd.com' if not xkcd_color_list else 'Color is not found', html, color
+
+
+def colored_image(name=None, html=None, random=False, xkcd=True):
+    """
+    Generates 500x500 image filled in with a given or random color.
+
+    :param name: str
+    :param html: str
+    :param random: bool
+    :param xkcd: bool
     :return: str, str, bytes
     """
     width, height = 500, 500
     image = Image.new('RGB', (width, height))
+    color = None
 
-    name = 'Unknown color'
-    if not color:
-        if html:
-            color = converter.html_to_color(html)
-        else:
+    if random:
+        if xkcd:
             name, html, color = random_xkcd_color()
+        else:
+            name = 'Random color'
+            html, color = random_color()
+    else:
+        if name:
+            name, html, color = find_color(name=name.capitalize())
+        if html:
+            name, html, color = find_color(html=html.upper())
 
     ImageDraw.floodfill(image, xy=(0, 0), value=color)
 
