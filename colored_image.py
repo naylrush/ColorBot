@@ -23,7 +23,7 @@ def color_to_html(color):
     if len(color) != 3:
         raise Exception('Three color properties required')
 
-    return '#' + ''.join(map(lambda s: format(s, 'x'), color)).upper()
+    return '#' + ('{:0<2}'*3).format(*map(lambda s: format(s, 'x'), color)).upper()
 
 
 def colored_image(color=None):
