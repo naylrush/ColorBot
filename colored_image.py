@@ -8,23 +8,39 @@ import sys
 import urllib.request
 
 
+xkcd_color_list = None
+
+
+def download_xkcd_color_list():
+    """
+    Downloads the xkcd color list (https://xkcd.com/color/rgb.txt).
+
+    :return: None
+    """
+    xkcd = 'https://xkcd.com/color/rgb.txt'
+
+    try:
+        ctx = ssl.SSLContext(ssl.PROTOCOL_TLS)
+        global xkcd_color_list
+        xkcd_color_list = urllib.request.urlopen(xkcd, context=ctx).read().decode().split('\n')[1:-1]
+    except:
+        print('An error occurred:', sys.exc_info())
+
+
 def random_color():
     """
-    Takes random color from xkcd.com (https://xkcd.com/color/rgb.txt).
+    Takes a random color from xkcd.com (https://xkcd.com/color/rgb.txt).
 
     :return: (int, int, int), str
     """
 
-    try:
-        xkcd = 'https://xkcd.com/color/rgb.txt'
+    if not xkcd_color_list:
+        download_xkcd_color_list()
 
-        ctx = ssl.SSLContext(ssl.PROTOCOL_TLS)
-        color_list = urllib.request.urlopen(xkcd, context=ctx).read().decode().split('\n')[1:-1]
-
-        name, color = choice(color_list)[:-1].split('\t')
+    if xkcd_color_list:
+        name, color = choice(xkcd_color_list)[:-1].split('\t')
         return html_to_color(color), name.capitalize()
-    except:
-        print('An error occurred:', sys.exc_info())
+    else:
         return (randint(0, 255), randint(0, 255), randint(0, 255)), 'Can\'t connect to xkcd.com'
 
 
