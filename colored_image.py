@@ -19,9 +19,11 @@ def download_xkcd_color_list():
     xkcd = 'https://xkcd.com/color/rgb.txt'
 
     try:
-        ctx = ssl.SSLContext(ssl.PROTOCOL_TLS)
         global xkcd_color_list
+        ctx = ssl.SSLContext(ssl.PROTOCOL_TLS)
         xkcd_color_list = urllib.request.urlopen(xkcd, context=ctx).read().decode().split('\n')[1:-1]
+        xkcd_color_list = map(lambda s: tuple(s[:-1].split('\t')), xkcd_color_list)
+        xkcd_color_list = list(map(lambda t: (t[0].capitalize(), t[1].upper()), xkcd_color_list))
     except IOError as err:
         print('{} — {}'.format(xkcd, err))
 
@@ -37,8 +39,8 @@ def random_color():
         download_xkcd_color_list()
 
     if xkcd_color_list:
-        name, html = choice(xkcd_color_list)[:-1].split('\t')
-        return name.capitalize(), html, html_to_color(html)
+        name, html = choice(xkcd_color_list)
+        return name, html, html_to_color(html)
     else:
         color = (randint(0, 255), randint(0, 255), randint(0, 255))
         return 'Can\'t connect to xkcd.com', color_to_html(color), color
