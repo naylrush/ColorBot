@@ -1,17 +1,31 @@
 
 from PIL import Image, ImageDraw
-from random import randint
+from random import randint, choice
 import io
 import re
+import ssl
+import sys
+import urllib.request
 
 
 def random_color():
     """
-    Returns random color.
+    Takes random color from xkcd.com (https://xkcd.com/color/rgb.txt).
 
-    :return: (int, int, int)
+    :return: (int, int, int), str
     """
-    return randint(0, 255), randint(0, 255), randint(0, 255)
+
+    try:
+        xkcd = 'https://xkcd.com/color/rgb.txt'
+
+        ctx = ssl.SSLContext(ssl.PROTOCOL_TLS)
+        color_list = urllib.request.urlopen(xkcd, context=ctx).read().decode().split('\n')[1:-1]
+
+        name, color = choice(color_list)[:-1].split('\t')
+        return html_to_color(color), name.capitalize()
+    except:
+        print('An error occurred:', sys.exc_info())
+        return (randint(0, 255), randint(0, 255), randint(0, 255)), 'Can\'t connect to xkcd.com'
 
 
 def color_to_html(color):
@@ -57,18 +71,19 @@ def html_to_color(html):
 
 def colored_image(color=None, html=None):
     """
-    Generates 500x500 image filled in with a given or random color.
+    Generates 500x500 image filled in with a given or random color from xkcd.
 
-    :return: bytes, str
+    :return: bytes, str, str
     """
     width, height = 500, 500
     image = Image.new('RGB', (width, height))
 
+    name = 'Unknown color'
     if not color:
         if html:
             color = html_to_color(html)
         else:
-            color = random_color()
+            color, name = random_color()
 
     ImageDraw.floodfill(image, xy=(0, 0), value=color)
 
@@ -76,4 +91,4 @@ def colored_image(color=None, html=None):
     image.save(bytes_buffer, format='PNG')
     bytes_image = bytes_buffer.getvalue()
 
-    return bytes_image, color_to_html(color)
+    return bytes_image, color_to_html(color), name

@@ -23,11 +23,11 @@ def send_message(message):
     :return: None
     """
     if message.text == 'Random':
-        image, html = colored_image.colored_image()
-        bot.send_photo(message.chat.id, photo=image, caption=html)
+        image, html, name = colored_image.colored_image()
+        bot.send_photo(message.chat.id, photo=image, caption='{} — {}'.format(name, html))
     elif colored_image.is_color_in_html(message.text):
-        image, html = colored_image.colored_image(html=message.text)
-        bot.send_photo(message.chat.id, photo=image, caption=html)
+        image, html, name = colored_image.colored_image(html=message.text)
+        bot.send_photo(message.chat.id, photo=image, caption='{} — {}'.format(name, html))
     else:
         bot.send_message(message.chat.id, text='Choose a button:', reply_markup=markup)
 
