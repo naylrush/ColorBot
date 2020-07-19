@@ -1,6 +1,7 @@
 
 import colored_image
 import converter
+import re
 import telebot
 
 
@@ -46,6 +47,25 @@ def help_message(message):
     bot.send_message(message.chat.id, text=help_msg, reply_markup=markup, parse_mode='Markdown')
 
 
+@bot.message_handler(commands=['color'])
+def color_command(message):
+    """
+    Sends image if command is not empty and prints a custom help if is.
+
+    :return: None
+    """
+    if message.text.startswith('/color'):
+        if message.text != '/color':
+            message.text = re.findall('^/color (.*)', message.text)[0]
+        else:
+            msg = 'Print with this command a color by name on [xkcd](xkcd.com/color/rgb) or by html, ' \
+                  'random [xkcd](xkcd.com/color/rgb) or just random color'
+            bot.send_message(message.chat.id, text=msg, reply_markup=markup, parse_mode='Markdown',
+                             reply_to_message_id=None if message.chat.type == 'private' else message.message_id)
+            return
+    send_image(message)
+
+
 @bot.message_handler(content_types=['text'])
 def send_image(message):
     """
@@ -65,8 +85,9 @@ def send_image(message):
         name, html, image = colored_image.colored_image(html=message.text)
     else:
         name, html, image = colored_image.colored_image(name=message.text)
-    bot.send_photo(message.chat.id, photo=image, caption='{} — {}'.format(name, html), reply_markup=markup)
 
+    bot.send_photo(message.chat.id, photo=image, caption='{} — {}'.format(name, html), reply_markup=markup,
+                   reply_to_message_id=None if message.chat.type == 'private' else message.message_id)
 
 
 def main():
