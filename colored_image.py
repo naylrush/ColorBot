@@ -2,36 +2,29 @@
 from PIL import Image, ImageDraw
 from datetime import datetime
 from random import randint
-import converter
+from color import NamedColor
 import io
 import xkcd
 
 
-def random_color():
+def random_color(*, name='Random color'):
     """
     Returns a random color.
 
-    :return: str, (int, int, int)
+    :return: color.NamedColor
     """
-    color = (randint(0, 255), randint(0, 255), randint(0, 255))
-    html = converter.color_to_html(color)
-    return html, color
+    return NamedColor(name=name, color=(randint(0, 255), randint(0, 255), randint(0, 255)))
 
 
 def random_xkcd_color():
     """
     Takes a random color from xkcd.com (https://xkcd.com/color/rgb.txt).
 
-    :return: str, str, (int, int, int)
+    :return: color.NamedColor
     """
     color = xkcd.xkcd_color_list.choice()
 
-    if color:
-        name, html = color
-        return name, html, converter.html_to_color(html)
-
-    html, color = random_color()
-    return 'Can\'t connect to xkcd.com', html, color
+    return color if color else random_color(name='Can\'t connect to xkcd.com')
 
 
 def find_color(name=None, html=None):
@@ -40,18 +33,13 @@ def find_color(name=None, html=None):
 
     :param name: str
     :param html: str
-    :return: str, str, (int, int, int)
+    :return: color.NamedColor
     """
     color = xkcd.xkcd_color_list.find_color(name=name, html=html)
 
     if color:
-        name, html = color
-        return name, html, converter.html_to_color(html)
-    elif html:
-        return 'Color is not found', html, converter.html_to_color(html)
-    else:
-        html, color = random_color()
-        return 'Can\'t connect to xkcd.com', html, color
+        return color if color.html else random_color(name=color.name)
+    return random_color(name='Can\'t connect to xkcd.com')
 
 
 def image_to_bytes(image):
@@ -86,16 +74,11 @@ def color_of_the_day():
     """
     Returns color of the day.
 
-    :return: str, str, (int, int, int)
+    :return: color.NamedColor
     """
     color = xkcd.xkcd_color_list[pseudorandom_number_of_today()]
 
-    if color:
-        name, html = color
-        return name, html, converter.html_to_color(html)
-    else:
-        html, color = random_color()
-        return 'Can\'t connect to xkcd.com', html, color
+    return color if color else random_color(name='Can\'t connect to xkcd.com')
 
 
 def colored_image(name=None, html=None, random=False, xkcd=True, color_otd=False):
@@ -111,22 +94,14 @@ def colored_image(name=None, html=None, random=False, xkcd=True, color_otd=False
     """
     width, height = 500, 500
     image = Image.new('RGB', (width, height))
-    color = None
 
     if color_otd:
-        name, html, color = color_of_the_day()
+        color = color_of_the_day()
     elif random:
-        if xkcd:
-            name, html, color = random_xkcd_color()
-        else:
-            name = 'Random color'
-            html, color = random_color()
+        color = random_xkcd_color() if xkcd else random_color()
     else:
-        if name:
-            name, html, color = find_color(name=name.capitalize())
-        if html:
-            name, html, color = find_color(html=html.upper())
+        color = find_color(name=name.capitalize() if name else None, html=html.upper() if html else None)
 
-    ImageDraw.floodfill(image, xy=(0, 0), value=color)
+    ImageDraw.floodfill(image, xy=(0, 0), value=color.color)
 
-    return name, html, image_to_bytes(image)
+    return color.name, color.html, image_to_bytes(image)

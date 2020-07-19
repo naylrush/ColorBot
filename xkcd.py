@@ -1,4 +1,5 @@
 
+from color import NamedColor
 from random import choice
 import ssl
 import urllib.request
@@ -30,25 +31,25 @@ class XkcdColorList:
         Returns [i % len(color_list)] element as (name, html)
 
         :param i: int
-        :return: str, str
+        :return: color.NamedColor
         """
         assert isinstance(i, int)
 
         if not self.color_list:
             self.download_xkcd_color_list()
 
-        return self.color_list[i % len(self.color_list)] if self.color_list else None
+        return NamedColor(*self.color_list[i % len(self.color_list)]) if self.color_list else None
 
     def choice(self):
         """
         Returns a random element of the color list.
 
-        :return: str, str
+        :return: color.NamedColor
         """
         if not self.color_list:
             self.download_xkcd_color_list()
 
-        return choice(self.color_list) if self.color_list else None
+        return NamedColor(*choice(self.color_list)) if self.color_list else None
 
     def find_color(self, *, name=None, html=None):
         """
@@ -56,7 +57,7 @@ class XkcdColorList:
 
         :param name: str
         :param html: str
-        :return: str, str
+        :return: color.NamedColor
         """
         if not self.color_list:
             self.download_xkcd_color_list()
@@ -64,8 +65,8 @@ class XkcdColorList:
         if self.color_list:
             for (name_, html_) in self.color_list:
                 if name == name_ or html == html_:
-                    return name_, html_
-        return None
+                    return NamedColor(name=name_, html=html_)
+        return NamedColor(name='Color is not found', html=html)
 
 
 xkcd_color_list = XkcdColorList()
