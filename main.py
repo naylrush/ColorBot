@@ -8,10 +8,10 @@ import telebot
 import hidden
 bot = telebot.TeleBot(hidden.bot_token)
 
-# Make a markup
+# Markup
 markup = telebot.types.ReplyKeyboardMarkup()
-buttons_names = ['Random xkcd', 'Random', 'Color of the day']
-buttons = [telebot.types.KeyboardButton(name) for name in buttons_names]
+buttons_names = ['random xkcd', 'random', 'color of the day']
+buttons = [telebot.types.KeyboardButton(name.capitalize()) for name in buttons_names]
 markup.row(*buttons[0:2])
 markup.row(buttons[2])
 
@@ -31,11 +31,11 @@ def send_image(message):
 
     :return: None
     """
-    if message.text == buttons_names[0]:
+    if message.text.lower() == buttons_names[0]:
         name, html, image = colored_image.colored_image(random=True)
-    elif message.text == buttons_names[1]:
+    elif message.text.lower() == buttons_names[1]:
         name, html, image = colored_image.colored_image(random=True, xkcd=False)
-    elif message.text == buttons_names[2]:
+    elif message.text.lower() == buttons_names[2]:
         name, html, image = colored_image.colored_image(color_otd=True)
     elif converter.is_color_in_html(message.text):
         name, html, image = colored_image.colored_image(html=message.text)
