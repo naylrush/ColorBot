@@ -3,8 +3,8 @@ from PIL import Image, ImageDraw
 from datetime import datetime
 from random import randint
 import converter
-import inet
 import io
+import xkcd
 
 
 def random_color():
@@ -24,7 +24,7 @@ def random_xkcd_color():
 
     :return: str, str, (int, int, int)
     """
-    color = inet.xkcd_color_list.choice()
+    color = xkcd.xkcd_color_list.choice()
 
     if color:
         name, html = color
@@ -42,7 +42,7 @@ def find_color(name=None, html=None):
     :param html: str
     :return: str, str, (int, int, int)
     """
-    color = inet.xkcd_color_list.find_color(name=name, html=html)
+    color = xkcd.xkcd_color_list.find_color(name=name, html=html)
 
     if color:
         name, html = color
@@ -88,7 +88,7 @@ def color_of_the_day():
 
     :return: str, str, (int, int, int)
     """
-    color = inet.xkcd_color_list[pseudorandom_number_of_today()]
+    color = xkcd.xkcd_color_list[pseudorandom_number_of_today()]
 
     if color:
         name, html = color
