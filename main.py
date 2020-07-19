@@ -4,26 +4,39 @@ import converter
 import telebot
 
 
-# Make a bot
 import hidden
 bot = telebot.TeleBot(hidden.bot_token)
 
-# Markup
-markup = telebot.types.ReplyKeyboardMarkup()
+markup = None
 buttons_names = ['random xkcd', 'random', 'color of the day']
-buttons = [telebot.types.KeyboardButton(name.capitalize()) for name in buttons_names]
-markup.row(*buttons[0:2])
-markup.row(buttons[2])
+
+
+def make_markup():
+    global markup
+    markup = telebot.types.ReplyKeyboardMarkup()
+    buttons = [telebot.types.KeyboardButton(name.capitalize()) for name in buttons_names]
+    markup.row(*buttons[0:2])
+    markup.row(buttons[2])
 
 
 @bot.message_handler(commands=['start'])
 def hello_message(message):
+    """
+    Prints hello message at start.
+
+    :return: None
+    """
     hello_msg = 'Hello!\nPrint the HTML or name of the color you want like «#FFB07C» or «Peach» or click a button.'
     bot.send_message(message.chat.id, text=hello_msg, reply_markup=markup)
 
 
 @bot.message_handler(commands=['help'])
 def help_message(message):
+    """
+    Prints help.
+
+    :return: None
+    """
     help_msg = """I'll send you a 500x500 image on your request with:
     1. «Random xkcd» or just «Random» color.
     2. A color by the name on [xkcd](xkcd.com/color/rgb).
@@ -55,6 +68,14 @@ def send_image(message):
     bot.send_photo(message.chat.id, photo=image, caption='{} — {}'.format(name, html), reply_markup=markup)
 
 
-if __name__ == '__main__':
-    # Start the bot
+
+def main():
+    """
+    Starts a bot and markup.
+    """
+    make_markup()
     bot.polling(none_stop=True, interval=0)
+
+
+if __name__ == '__main__':
+    main()
