@@ -1,5 +1,6 @@
 
 from PIL import Image, ImageDraw
+from datetime import datetime
 from random import randint, choice
 import converter
 import inet
@@ -69,7 +70,40 @@ def image_to_bytes(image):
     return bytes_buffer.getvalue()
 
 
-def colored_image(name=None, html=None, random=False, xkcd=True):
+def pseudorandom_number_of_today():
+    """
+    Returns the pseudorandom number of the today.
+
+    :return: int
+    """
+    multiplier = int('5DEECE66', 16)
+    addend = 11
+    mask = (1 << 48) - 1
+
+    today = datetime.today()
+    date = sum(datetime(today.year, today.month, today.day).isocalendar())
+
+    return ((date * multiplier + addend) & mask) << 16
+
+
+def color_of_the_day():
+    """
+    Returns color of the day.
+
+    :return: str, str, (int, int, int)
+    """
+
+    if not inet.xkcd_color_list:
+        inet.download_xkcd_color_list()
+
+    if inet.xkcd_color_list:
+        name, html = inet.xkcd_color_list[pseudorandom_number_of_today() % len(inet.xkcd_color_list)]
+        return name, html, converter.html_to_color(html)
+    else:
+        return 'Can\'t connect to xkcd.com', random_color()
+
+
+def colored_image(name=None, html=None, random=False, xkcd=True, color_otd=False):
     """
     Generates 500x500 image filled in with a given or random color.
 
@@ -77,13 +111,16 @@ def colored_image(name=None, html=None, random=False, xkcd=True):
     :param html: str
     :param random: bool
     :param xkcd: bool
+    :param color_otd: bool
     :return: str, str, bytes
     """
     width, height = 500, 500
     image = Image.new('RGB', (width, height))
     color = None
 
-    if random:
+    if color_otd:
+        name, html, color = color_of_the_day()
+    elif random:
         if xkcd:
             name, html, color = random_xkcd_color()
         else:
