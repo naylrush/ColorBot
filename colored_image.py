@@ -1,7 +1,7 @@
 
 from PIL import Image, ImageDraw
 from datetime import datetime
-from random import randint, choice
+from random import randint
 import converter
 import inet
 import io
@@ -24,15 +24,14 @@ def random_xkcd_color():
 
     :return: str, str, (int, int, int)
     """
-    if not inet.xkcd_color_list:
-        inet.download_xkcd_color_list()
+    color = inet.xkcd_color_list.choice()
 
-    if inet.xkcd_color_list:
-        name, html = choice(inet.xkcd_color_list)
+    if color:
+        name, html = color
         return name, html, converter.html_to_color(html)
-    else:
-        html, color = random_color()
-        return 'Can\'t connect to xkcd.com', html, color
+
+    html, color = random_color()
+    return 'Can\'t connect to xkcd.com', html, color
 
 
 def find_color(name=None, html=None):
@@ -43,19 +42,16 @@ def find_color(name=None, html=None):
     :param html: str
     :return: str, str, (int, int, int)
     """
-    if not inet.xkcd_color_list:
-        inet.download_xkcd_color_list()
+    color = inet.xkcd_color_list.find_color(name=name, html=html)
 
-    if inet.xkcd_color_list:
-        for (name_, html_) in inet.xkcd_color_list:
-            if name == name_ or html == html_:
-                return name_, html_, converter.html_to_color(html_)
-
-    if html:
+    if color:
+        name, html = color
+        return name, html, converter.html_to_color(html)
+    elif html:
         return 'Color is not found', html, converter.html_to_color(html)
-
-    html, color = random_color()
-    return 'Can\'t connect to xkcd.com' if not inet.xkcd_color_list else 'Color is not found', html, color
+    else:
+        html, color = random_color()
+        return 'Can\'t connect to xkcd.com', html, color
 
 
 def image_to_bytes(image):
@@ -92,15 +88,14 @@ def color_of_the_day():
 
     :return: str, str, (int, int, int)
     """
+    color = inet.xkcd_color_list[pseudorandom_number_of_today()]
 
-    if not inet.xkcd_color_list:
-        inet.download_xkcd_color_list()
-
-    if inet.xkcd_color_list:
-        name, html = inet.xkcd_color_list[pseudorandom_number_of_today() % len(inet.xkcd_color_list)]
+    if color:
+        name, html = color
         return name, html, converter.html_to_color(html)
     else:
-        return 'Can\'t connect to xkcd.com', random_color()
+        html, color = random_color()
+        return 'Can\'t connect to xkcd.com', html, color
 
 
 def colored_image(name=None, html=None, random=False, xkcd=True, color_otd=False):
