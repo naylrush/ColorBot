@@ -16,6 +16,12 @@ markup.row(*buttons[0:2])
 markup.row(buttons[2])
 
 
+@bot.message_handler(commands=['start'])
+def hello_message(message):
+    hello_msg = 'Hello!\nPrint the HTML or name of the color you want like «#FFB07C» or «Peach» or click a button.'
+    bot.send_message(message.chat.id, text=hello_msg, reply_markup=markup)
+
+
 @bot.message_handler(content_types=['text'])
 def send_image(message):
     """
