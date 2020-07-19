@@ -22,6 +22,17 @@ def hello_message(message):
     bot.send_message(message.chat.id, text=hello_msg, reply_markup=markup)
 
 
+@bot.message_handler(commands=['help'])
+def help_message(message):
+    help_msg = """I'll send you a 500x500 image on your request with:
+    1. «Random xkcd» or just «Random» color.
+    2. A color by the name on [xkcd](xkcd.com/color/rgb).
+    3. A color by its HTML color code.
+    4. The «Color of the day».
+    """
+    bot.send_message(message.chat.id, text=help_msg, reply_markup=markup, parse_mode='Markdown')
+
+
 @bot.message_handler(content_types=['text'])
 def send_image(message):
     """
