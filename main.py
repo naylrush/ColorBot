@@ -47,6 +47,26 @@ def help_message(message):
     bot.send_message(message.chat.id, text=help_msg, reply_markup=markup, parse_mode='Markdown')
 
 
+@bot.message_handler(commands=['hide'])
+def hide_keyboard(message):
+    """
+    Hides keyboard.
+
+    :return: None
+    """
+    bot.send_message(message.chat.id, text='The keyboard was hidden', reply_markup=telebot.types.ReplyKeyboardRemove())
+
+
+@bot.message_handler(commands=['show'])
+def show_keyboard(message):
+    """
+    Shows keyboard.
+
+    :return: None
+    """
+    bot.send_message(message.chat.id, text='The keyboard was appeared', reply_markup=markup)
+
+
 @bot.message_handler(commands=['color'])
 def color_command(message):
     """
