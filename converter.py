@@ -34,7 +34,7 @@ def html_to_color(html):
     :return: (int, int, int)
     """
     if not is_color_in_html(html):
-        raise Exception('The color is not in HTML color format!')
+        raise Exception(f'The color "{html}" is not in HTML color format!')
 
     color = []
     for i in range(3):
