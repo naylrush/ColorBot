@@ -91,19 +91,19 @@ def send_image(message):
     """
     Sends image 500x500.
 
-    Options: Random, Image by color in HTML color format.
+    Options: random, random xkcd, Image by color in HTML color format, color of the day.
 
     :return: None
     """
-    if message.text.lower() == buttons_names[0]:
+    if message.text.lower() == buttons_names[0]:  # random
         name, html, image = colored_image.colored_image(random=True)
-    elif message.text.lower() == buttons_names[1]:
+    elif message.text.lower() == buttons_names[1]:  # random xkcd
         name, html, image = colored_image.colored_image(random=True, xkcd=False)
-    elif message.text.lower() == buttons_names[2]:
+    elif message.text.lower() == buttons_names[2]:  # color of the day
         name, html, image = colored_image.colored_image(color_otd=True)
-    elif converter.is_color_in_html(message.text):
+    elif converter.is_color_in_html(message.text):  # html
         name, html, image = colored_image.colored_image(html=message.text)
-    else:
+    else:  # requested color
         name, html, image = colored_image.colored_image(name=message.text)
 
     bot.send_photo(message.chat.id, photo=image, caption='{} — {}'.format(name, html), reply_markup=markup,
