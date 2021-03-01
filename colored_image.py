@@ -3,6 +3,7 @@ from PIL import Image, ImageDraw
 from datetime import datetime
 from random import randint
 from color import NamedColor
+import hashlib
 import io
 import xkcd
 
@@ -93,6 +94,12 @@ def colored_image(name=None, html=None, random=False, xkcd=True, color_otd=False
         color = random_xkcd_color() if xkcd else random_color()
     else:
         color = find_color(name=name.capitalize() if name else None, html=html.upper() if html else None)
+        if not color:
+            if not html:
+                sha = hashlib.sha256()
+                sha.update(name.encode())
+                html = '#' + sha.hexdigest()[:6]
+            color = NamedColor(name=name, html=html.upper())
 
     ImageDraw.floodfill(image, xy=(0, 0), value=color.color)
 
