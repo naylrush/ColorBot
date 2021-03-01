@@ -75,8 +75,10 @@ def color_command(message):
     :return: None
     """
     if message.text.startswith('/color'):
-        if message.text != '/color':
-            message.text = re.findall('^/color (.*)', message.text)[0]
+        matched = re.findall('^/color (.*)', message.text)
+
+        if matched:
+            message.text = matched[0]
         else:
             msg = 'Print with this command a color by name on [xkcd](xkcd.com/color/rgb) or by html, ' \
                   'random [xkcd](xkcd.com/color/rgb) or just random color'
