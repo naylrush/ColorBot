@@ -97,16 +97,20 @@ def send_image(message):
 
     :return: None
     """
-    if message.text.lower() == buttons_names[0]:  # random
+    try:
+        if message.text.lower() == buttons_names[0]:  # random
+            name, html, image = colored_image.colored_image(random=True)
+        elif message.text.lower() == buttons_names[1]:  # random xkcd
+            name, html, image = colored_image.colored_image(random=True, xkcd=False)
+        elif message.text.lower() == buttons_names[2]:  # color of the day
+            name, html, image = colored_image.colored_image(color_otd=True)
+        elif converter.is_color_in_html(message.text):  # html
+            name, html, image = colored_image.colored_image(html=message.text)
+        else:  # requested color
+            name, html, image = colored_image.colored_image(name=message.text)
+    except IOError:  # if can't connect to xkcd.com, then send a random color picture
+        bot.send_message(message.chat.id, text='Can\'t connect to xkcd.com', reply_markup=markup)
         name, html, image = colored_image.colored_image(random=True)
-    elif message.text.lower() == buttons_names[1]:  # random xkcd
-        name, html, image = colored_image.colored_image(random=True, xkcd=False)
-    elif message.text.lower() == buttons_names[2]:  # color of the day
-        name, html, image = colored_image.colored_image(color_otd=True)
-    elif converter.is_color_in_html(message.text):  # html
-        name, html, image = colored_image.colored_image(html=message.text)
-    else:  # requested color
-        name, html, image = colored_image.colored_image(name=message.text)
 
     bot.send_photo(message.chat.id, photo=image, caption='{} — {}'.format(name, html), reply_markup=markup,
                    reply_to_message_id=None if message.chat.type == 'private' else message.message_id)

@@ -22,9 +22,7 @@ def random_xkcd_color():
 
     :return: color.NamedColor
     """
-    color = xkcd.xkcd_color_list.choice()
-
-    return color if color else random_color(name='Can\'t connect to xkcd.com')
+    return xkcd.xkcd_color_list.choice()
 
 
 def find_color(name=None, html=None):
@@ -35,11 +33,7 @@ def find_color(name=None, html=None):
     :param html: str
     :return: color.NamedColor
     """
-    color = xkcd.xkcd_color_list.find_color(name=name, html=html)
-
-    if color:
-        return color if color.html else random_color(name=color.name)
-    return random_color(name='Can\'t connect to xkcd.com')
+    return xkcd.xkcd_color_list.find_color(name=name, html=html)
 
 
 def image_to_bytes(image):
@@ -76,9 +70,7 @@ def color_of_the_day():
 
     :return: color.NamedColor
     """
-    color = xkcd.xkcd_color_list[pseudorandom_number_of_today()]
-
-    return color if color else random_color(name='Can\'t connect to xkcd.com')
+    return xkcd.xkcd_color_list[pseudorandom_number_of_today()]
 
 
 def colored_image(name=None, html=None, random=False, xkcd=True, color_otd=False):

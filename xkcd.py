@@ -25,6 +25,7 @@ class XkcdColorList:
             self.color_list = list(map(lambda t: (t[0].capitalize(), t[1].upper()), self.color_list))
         except IOError as err:
             print('{} — {}'.format(xkcd, err))
+            raise
 
     def __getitem__(self, i):
         """
@@ -62,11 +63,11 @@ class XkcdColorList:
         if not self.color_list:
             self.download_xkcd_color_list()
 
-        if self.color_list:
-            for (name_, html_) in self.color_list:
-                if name == name_ or html == html_:
-                    return NamedColor(name=name_, html=html_)
-        return NamedColor(name='Color is not found', html=html)
+        for (name_, html_) in self.color_list:
+            if name == name_ or html == html_:
+                return NamedColor(name=name_, html=html_)
+
+        return None
 
 
 xkcd_color_list = XkcdColorList()
